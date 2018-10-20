@@ -1,0 +1,20 @@
+version: '{build}'
+image: Visual Studio 2017
+
+environment:
+  # Get stack traces from uno.
+  LOG_TRACE: 1
+
+install:
+  - bash .fuse\install.sh
+  - bash .fuse\install-android.sh
+  - set PATH=.fuse;%PATH%
+
+build_script:
+  - uno create -capp -napp .
+  - uno build android & taskkill /F /IM java.exe /T
+
+artifacts:
+  - path: build\Android\Debug\app.apk
+
+test: off
