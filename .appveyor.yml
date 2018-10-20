@@ -6,15 +6,18 @@ environment:
   LOG_TRACE: 1
 
 install:
+  # Install GStreamer
+  - curl -L -s https://gstreamer.freedesktop.org/data/pkg/windows/1.14.4/gstreamer-1.0-devel-x86_64-1.14.4.msi -o gstreamer-1.0-devel.msi
+  - curl -L -s https://gstreamer.freedesktop.org/data/pkg/windows/1.14.4/gstreamer-1.0-x86_64-1.14.4.msi -o gstreamer-1.0.msi
+  - msiexec.exe /i gstreamer-1.0-devel.msi /QN
+  - msiexec.exe /i gstreamer-1.0.msi /QN
+  - ls -la "C:\gstreamer\1.0\x86_64"
+  # Install Fuse
   - bash .fuse\install.sh
-  - bash .fuse\install-android.sh
   - set PATH=.fuse;%PATH%
 
 build_script:
   - uno create -capp -napp .
-  - uno build android & taskkill /F /IM java.exe /T
-
-artifacts:
-  - path: build\Android\Debug\app.apk
+  - uno build native
 
 test: off
