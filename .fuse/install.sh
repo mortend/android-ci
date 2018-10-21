@@ -5,41 +5,44 @@
 
 SELF=`echo $0 | sed 's/\\\\/\\//g'`
 cd "`dirname "$SELF"`" || exit 1
-trap 'echo -e "\nERROR: Install failed, please check logs -- or try \"git clean -dxf .fuse\"."; exit 1' ERR
+trap 'echo -e "\nERROR: Install failed, please check logs -- or try \"git clean -dxff .fuse\"."; exit 1' ERR
 source config.sh
 set -u
 
-# Get source code archives
-function get-zip {
+# Get source code using Git
+function get-git {
     url=$1
-    dir=$2
-    zip=$2.zip
+    co=$2
+    dir=$3
 
     if [ -d $dir ]; then
         echo "Have '$dir' -- skipping download"
         return
     fi
 
-    if [ -f $zip ]; then
-        echo "Have '$zip' -- skipping download"
-    else
-        echo "Downloading '$url'..."
-        curl -s -L $url --output $zip
-    fi
-
-    unzip -q $zip
+    echo "Cloning '$dir' from $url..."
+    git clone -q $url $dir
+    pushd $dir > /dev/null
+    git checkout -qf $co
+    popd > /dev/null
 }
 
 UNO_DIR=uno-$UNO_VERSION
 FUSELIBS_DIR=fuselibs-$FUSELIBS_VERSION
 
-get-zip https://github.com/fuse-open/uno/archive/$UNO_VERSION.zip $UNO_DIR
-get-zip https://github.com/fuse-open/fuselibs/archive/$FUSELIBS_VERSION.zip $FUSELIBS_DIR
+get-git https://github.com/fuse-open/uno.git $UNO_VERSION $UNO_DIR
+get-git https://github.com/fuse-open/fuselibs.git $FUSELIBS_VERSION $FUSELIBS_DIR
 
 # Generate config files
 echo -e "require $UNO_DIR/.unoconfig" > .unoconfig
 echo -e "Packages.SourcePaths += $FUSELIBS_DIR/Source" >> .unoconfig
 sed -e "s/^/$UNO_DIR\/bin\//" $UNO_DIR/bin/.unopath > .unopath
+cp $UNO_DIR/bin/uno* .
+
+# Option to skip building
+if [[ $# -gt 0 && "$1" == --no-build ]]; then
+    exit 0
+fi
 
 # Build uno (unless already built)
 function test-uno {
@@ -51,7 +54,6 @@ if [ `test-uno` = 0 ]; then
     echo "Uno works -- skipping build"
 else
     bash $UNO_DIR/scripts/build.sh
-    cp $UNO_DIR/bin/uno* .
 fi
 
 # Build fuselibs
