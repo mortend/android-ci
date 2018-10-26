@@ -12,7 +12,7 @@ install:
 
 build_script:
   - uno create -capp -napp .
-  - uno build android; set result=%ERRORLEVEL%; taskkill /F /IM java.exe /T; exit /b %result%
+  - uno build android & set result=%ERRORLEVEL% & taskkill /F /IM java.exe /T & exit /b %result%
 
 artifacts:
   - path: build\Android\Debug\app.apk
