@@ -11,6 +11,7 @@ install:
   - set PATH=.fuse;%PATH%
 
 build_script:
+  - uno create -capp -napp
   # Run Android build in PowerShell so we can kill java to avoid that AppVeyor hangs,
   # and still return the right exit code from uno.
   - ps: |
