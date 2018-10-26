@@ -11,8 +11,12 @@ install:
   - set PATH=.fuse;%PATH%
 
 build_script:
-  - uno create -capp -napp .
-  - uno build android & set result=%ERRORLEVEL% & taskkill /F /IM java.exe /T & exit /b %result%
+  # Run build in PowerShell so we can kill java and avoid that AppVeyor hangs.
+  - ps: |
+    & uno build android
+    $retval = $LASTEXITCODE
+    & taskkill /F /IM java.exe /T
+    Exit $retval
 
 artifacts:
   - path: build\Android\Debug\app.apk
