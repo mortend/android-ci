@@ -33,7 +33,7 @@ function get-zip {
 UNO_DIR=uno-$UNO_VERSION
 FUSELIBS_DIR=fuselibs-$FUSELIBS_VERSION
 
-get-zip https://github.com/fuse-open/uno/archive/$UNO_VERSION.zip $UNO_DIR
+get-zip https://github.com/mortend/uno/archive/$UNO_VERSION.zip $UNO_DIR
 get-zip https://github.com/fuse-open/fuselibs/archive/$FUSELIBS_VERSION.zip $FUSELIBS_DIR
 
 # Generate config files
