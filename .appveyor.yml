@@ -11,12 +11,13 @@ install:
   - set PATH=.fuse;%PATH%
 
 build_script:
-  # Run build in PowerShell so we can kill java and avoid that AppVeyor hangs.
+  # Run Android build in PowerShell so we can kill java to avoid that AppVeyor hangs,
+  # and still return the right exit code from uno.
   - ps: |
-    & uno build android
-    $retval = $LASTEXITCODE
-    & taskkill /F /IM java.exe /T
-    Exit $retval
+      & uno build android
+      $retval = $LASTEXITCODE
+      & taskkill /F /IM java.exe /T
+      Exit $retval
 
 artifacts:
   - path: build\Android\Debug\app.apk
