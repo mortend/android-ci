@@ -18,11 +18,9 @@ install:
 build_script:
   - uno create -capp -napp .
   - uno build native
-  - 7z a app-windows.zip %APPVEYOR_BUILD_FOLDER%\build\Native\Debug\*.dll
-  - 7z a app-windows.zip %APPVEYOR_BUILD_FOLDER%\build\Native\Debug\*.exe
-  - 7z a app-windows.zip %APPVEYOR_BUILD_FOLDER%\build\Native\Debug\data\*.*
+  - bash -c "cd $APPVEYOR_BUILD_FOLDER\build\Native\Debug && 7z a app-windows.zip *.dll *.exe data\*.*"
 
 artifacts:
-  - path: app-windows.zip
+  - path: build\Native\Debug\app-windows.zip
 
 test: off
